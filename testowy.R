@@ -109,6 +109,7 @@ head(mtcars)
 summary(iris)
 describe(iris)
 str(iris)
+
 glimpse(iris)
 typeof(mtcars)
 class(mtcars)
