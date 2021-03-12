@@ -114,6 +114,9 @@ typeof(mtcars)
 class(mtcars)
 
 
+
+
+
 levels(factor(mtcars$cyl))
 dim(mtcars)
 length(mtcars)
