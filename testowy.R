@@ -52,7 +52,7 @@
 # ggcorr() - corelation plot
 # ggpairs()
 # ggplot(data %>% group_by(lgID) %>% summarise(mean_home_run = mean(HR)), aes(x, y, fill=)) + ; 
-# ggplot: geom_point(); geom_bar(); geom_line(); geom_histogram(); geom_density(); geom_smooth(); geom_boxplot(); coord_flip()
+# ggplot: geom_point(); geom_bar(); geom_line(); geom_density(); geom_smooth(); geom_boxplot(); coord_flip()
 # factor(numerical_variable)>categorical_variable
 # new_col = factor(old_col, order = T, levels = (1, 2), labels = c('s1', 's2'))
 # color = factor(gear) - kazy gear-innt kolor; (color = gear) - geary w skali jednego koloru
@@ -106,16 +106,12 @@ pacman::p_load(pacman, psych, rio, tidyverse, plyr # summarise  nie działa z pl
 
 # info o obiekcie
 head(mtcars)
+glimpse(iris)
 summary(iris)
 describe(iris)
 str(iris)
-glimpse(iris)
 typeof(mtcars)
 class(mtcars)
-
-
-
-
 
 levels(factor(mtcars$cyl))
 dim(mtcars)
@@ -1187,6 +1183,16 @@ box_plot +
 
 
 # Bar Chart & Histogram
+iris %>%
+  mutate(Species = factor(Species)) %>%
+ggplot(aes(Sepal.Length, fill=Species))+
+  geom_bar()
+
+iris %>%
+  filter(iris$Species == "setosa") %>%
+  mutate(Species = factor(Species)) %>%
+  ggplot(aes(Sepal.Length, fill=Species))+
+  geom_bar()
 
 
 ggplot(mtcars, aes(factor(cyl), fill = factor(cyl))) +
@@ -1212,9 +1218,6 @@ data_hist2 <- mtcars %>%
          cyl = factor(cyl))
 
 
-
-ggplot(data_hist2, aes(cyl)) +
-  geom_bar(stat = "identity")
 
 length(grDevices::colors())
 data <- mtcars %>%
@@ -1775,8 +1778,25 @@ percent_map(counties$white, "darkgreen", "% Nigga")
 source("helpers.R")
 counties <- readRDS("E:/Chmura/Dysk Google/Nauka/Programowanie/R/census-app/data/countries.rds")
 
+# Data sourcing
+library(jsonlite)
+browseURL("http://ergast.com/mrd")
+browseURL("http://ergast.com/api/f1/1957/results.json")
+url <- "http://ergast.com/api/f1/1957/results.json"
+f1 <- fromJSON(url)
+glimpse(f1)
+head(f1)
+str(f1)
+df <- f1$MRData$RaceTable$Races$Results[[1]]$Driver
+colnames(df)
+df[1:5, c("givenName", "familyName", "dateOfBirth","nationality" )]
+# 
 
-# CLEAN UP #################################################
+curve(x^2, -4, 4)
+curve(-4*x-4, add = T, -4, 4)
+
+
+  # CLEAN UP #################################################
 
 # Clear environment
 rm(list = ls()) 
