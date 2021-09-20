@@ -1,3 +1,5 @@
+# (foo) == print(foo)
+# ls(environment()) przypisane zmienne
 # [:] part
 # %% - modul
 # table - select unique values in a set of vector
@@ -76,6 +78,10 @@
 # INSTALL AND LOAD PACKAGES ################################
 
 # install.packages("animation")
+# https://github.com/REditorSupport/vscode-R#r-session-watcher-experimental
+# install.packages(c("jsonlite", "rlang"))
+# install.packages("olsrr")
+# install.packages("DescTools")
 library(datasets)  # Load base packages manually
 library(dplyr)
 library(ggplot2)
@@ -84,9 +90,12 @@ library(rio)
 library(tidyr)
 library(psych)
 library(GGally)
-setwd("C:/Users/Ukasz/Desktop")
 
+#library(jsonlite)
+#library(rlang)
 
+# setwd("/home/ukasz/Documents/Programowanie/R")
+# getwd()
 
 
 # Installs pacman ("package manager") if needed
@@ -168,12 +177,12 @@ versi <- iris$Petal.Length[iris$Species == "versicolor"]
 rug(versi, lwd=2)
 
 
-
-(subset(mtcars, wt>2 & wt<4, select = c(wt, mpg) ))
-transform(airquality, new = -Ozone, Temp = (Temp-32)/1.8)
-mutate(airquality, new = -Ozone, Temp = (Temp-32)/1.8)
-summarise(airquality, new = -Ozone, Temp = (Temp-32)/1.8)
-arrange(airquality, new = -Ozone, Temp = (Temp-32)/1.8)
+head(airquality)
+subset(mtcars, wt>2 & wt<4, select = c(wt, mpg))
+head(transform(airquality, new = -Ozone, Temp = (Temp-32)/1.8))
+head(mutate(airquality, new = -Ozone, Temp = (Temp-32)/1.8))
+head(summarise(airquality, new = -Ozone, Temp = (Temp-32)/1.8))
+head(arrange(airquality, -Ozone, (Temp-32)/1.8))
 select(mtcars, mpg, disp, gear)
 merge
 join
@@ -198,23 +207,24 @@ vLogical   <- c(T, F, T)
 vNumeric[1:2]
 
 
-
 10%%3
 l_w=c(1:10)
 l_w==5 | l_w==9
 l_w[l_w==5]
 l_w[l_w>5 & l_w<9]
-(rep1=rep(c(F, T),each=5))
+rep1 = rep(c(F, T),each=5)
+class(rep1)
 l_w[rep1]
 
 
 dfa <- cbind(vNumeric, vCharacter, vLogical)
 dfa  # Matrix of one data type
 is.matrix(dfa)
-(matrix1 <- matrix(1:10, nrow=5, byrow = T))
+matrix1 <- matrix(1:10, nrow=5, byrow = T)
+dim(matrix1)
 dim(matrix1)[1]
 rbind(matrix1, c(11:12))
-m1 <- cbind(matrix1, 1:5)
+m1 <- cbind(matrix1, c(1:5))
 (rbind(matrix1, 14:15))
 (cbind(matrix1, matrix1))
 (c(matrix1, matrix1))
@@ -253,41 +263,42 @@ class(gv)
 class(fgv)
 (as.data.frame(cbind(m1, gv)))
 
-(dv <- c('evening', 'morning', 'afternoon', 'midday', 'midnight', 'evening'))
-fdv <- (factor(dv, order = T))
+dv <- c('evening', 'morning', 'afternoon', 'midday', 'midnight', 'evening')
+fdv <- factor(dv, order = T)
 summary(fdv)
 
 class(mtcars[,1])
 mtcars[,1]
 mtcars$mpg
+mtcars[1,]
+sd(mtcars[,1])
 
 
 # Create a, b, c, d variables
 a <- c(10,20,30,40)
 b <- c('book', 'pen', 'textbook', 'pencil_case')
-c <- c(TRUE,FALSE,TRUE,FALSE)
+c <- c(TRUE, FALSE, TRUE, FALSE)
 d <- c(2.5, 8, 10, 7)
 # Join the variables to create a data frame
 df <- data.frame(a,b,c,d)
 ti <- tibble(a, b, c, d)
-df
-tibble(a, b, c, d)
 names(df) <- c('ID', 'items', 'store', 'price')
 str(df)
-df[1,2]
+df[1, 2]
 df[,c('ID',"store")]
 df$ID
+df[1]
 quantity1 <- c(10, 35, 40, 5)
 df$quantity <- quantity1
 subset(df, price>5)
 df <- cbind(df, c(1:4))
-df[, df$quantity>11] # to jest glupie
+names(df)[6] <- 'count'
+df[, df$quantity>11] # to jest głupie
 df[, rep(c(F, T), times=2)]
-subset(df, quantity>11)
+
 
 
 df <- EuStockMarkets[1:10,]
-df
 list1 <- list(c(1:5), matrix(c(1:10), ncol = 2), df)
 list1[[2]]
 PATH <-'https://raw.githubusercontent.com/guru99-edu/R-Programming/master/prison.csv'
@@ -315,7 +326,7 @@ head(df)
 
 tcars <- as_tibble(mtcars)
 head(tcars)
-(tcars[order(tcars$cyl, -tcars$mpg),])
+tcars[order(tcars$cyl, -tcars$mpg), ]
 mtcars[order(mtcars$cyl, -mtcars$mpg), ]
 
 
@@ -331,17 +342,17 @@ str(df5)
 (rep(1:4, each = 2, len = 10))
 
 
-import1 <- import("C:/Users/Ukasz/Desktop/df.csv")
-head(import1)
-write.csv(import1, "df.csv")
-
 mt1 <- mtcars
 colnames(mt1)[colnames(mt1) == ""] <- "type"
+colnames(mt1)[0] <- 'model'
 mt1 <- cbind("test", mt1)
 head(mt1)
 write.csv(mt1, "df.csv")
 mt1[0]
 
+import1 <- import("/home/ukasz/Documents/Programowanie/R/df.csv")
+head(import1)
+write.csv(import1, "df.csv")
 
 cars <- mtcars[, c(1:4, 6, 7, 9:11)]
 head(cars)
@@ -375,11 +386,10 @@ df1 <- data_frame(
   cc1 = c('A','B','C','D','F'),
   cc2 = c(5, 5, 8, 0, 9)
 )
-df1
 typeof(df1)
 
 df1$cc3 <- c(1:5)
-as_tibble(cc3)
+as_tibble(df1)
 
 
 df_p <- tribble(~ID, ~y, "A", 5, "B", 5, "C", 8, "D", 0, "F", 9)
@@ -480,7 +490,8 @@ movies
 
 # Merge two datasets
 m1 <- merge(producers, movies, by = "surname")
-m11 <- inner_join(producers, movies, by='surname')[order(m11$surname), ]
+m11 <- inner_join(producers, movies, by='surname')
+m11 <- m11[order(m11$surname), ]
 dim(m1)
 identical(m11, m1)
 order(m1$surname)
@@ -496,6 +507,9 @@ identical(m1, m2)
 producers <- rbind(producers, c("Lucas", "US"))
 m3 <- merge(producers, movies, by.x = "surname", by.y = "name", all.x = T)
 m3
+m4 <- merge(producers, movies, by.x = "surname", by.y = "name", all.x = F)
+m4
+identical(m3, m4)
 
 
 set.seed(123)
@@ -527,10 +541,12 @@ factorial(5)
 speed <- cars$speed
 mean(speed)
 median(speed)
+class(median(speed))
 sd(speed)
+head(scale(speed,))
 head(scale(speed))
 (cars$speed[1]-mean(cars$speed))/sd(cars$speed)
-head((cars$speed-mean(cars$speed))/sd(cars$speed))
+head(( cars$speed - mean( cars$speed ))/sd( cars$speed ))
 scale(cars$speed)[1]
 quantile(cars$speed)
 range(cars$speed)
@@ -541,9 +557,9 @@ summary(cars$speed)
 
 
 x <- 10
-dodac <- function(y){
-  x+y
-  }
+dodac <- function(y) {
+  x + y
+}
 dodac(3)
 ls(environment())
 
@@ -556,39 +572,42 @@ data_frame <- tibble(
 )
 data_frame$c1_norm <- (data_frame$c1 - min(data_frame$c1))/(max(data_frame$c1) - min(data_frame$c1))
 head(data_frame)
-normalize <- function(x)
-{
+
+normalize <- function(x){
   return((x - min(x))/(max(x) - min(x)))
 }
 norm1 <- normalize(data_frame$c1)
 head(norm1)
 
-split_data <- function(df, train=T)
-{
+split_data <- function(df, train=T) {
   split <- (1: round(nrow(df)*.8))
-  if(train == T){
+  if(train == T) {
     return(df[split, ])
-    } 
+  } 
   else {
     return(df[-split, ])
-    }
+  }
 }
-split_data(airquality, train=F)
+norm1 <- split_data(airquality, train=F)
+head(norm1)
 
 
 
 # Create fruit vector
 fruit <- c('Apple', 'Orange', 'Passion fruit', 'Banana')
 # Create the for statement
-for (i in fruit){
+for (i in fruit) {
   print(i)
 }
 
-list <- c()
-for (i in (1:4)){
-  list[i] <-  (i^2)
+for (i in (1:length(fruit))) {
+  print(fruit[i])
 }
-print(list)
+
+list <- c()
+for (i in (1:4)) {
+  list[i] <- (i^2)
+}
 list
 as_tibble(list)
 
@@ -597,28 +616,29 @@ fruit <- list(
   Basket = c('Apple', 'Orange', 'Passion fruit', 'Banana'), 
   Money = c(10, 12, 15), 
   purchase = FALSE)
-for (r in fruit){
+for (r in fruit) {
   print(r)
 }
 
 
 mat <- matrix(1:12, nrow=6, ncol = 2)
-for (r in 1:nrow(mat)){
-  for (c in 1:ncol(mat)){
+for (r in 1:nrow(mat)) {
+  for (c in 1:ncol(mat)) {
     print(paste("row", r, "col", c, "val =", mat[r,c]))
   }
 }
 
 i <- 1
-while (i<=10){
+while (i<=10) {
   i <- i+1
   print(i)
 }
 begin <- 1
-while (begin <= 10){
-  cat('This is loop number', begin)
+while (begin <= 10) {
+  cat('This is loop number', begin, "\n")
+  # print(paste('This is loop number', begin))
   begin <- begin+1
-  print(begin)
+#  print(begin)
 }
 
 
@@ -634,6 +654,7 @@ movies_lower <- unlist(movies_lower)
 movies_lower <- sapply(movies, tolower)
 as_tibble(movies_lower)
 
+
 dt <- cars
 lmn_cars <- lapply(dt, min)
 smn_cars <- sapply(dt, min)
@@ -641,22 +662,25 @@ smn_cars <- sapply(dt, min)
 describe(dt)
 
 avg <- function(x) {  
-  ( min(x) + max(x) ) / 2}
+  return(( min(x) + max(x) ) / 2)
+}
 avg(dt[1])
-fcars <- sapply(dt, avg)
-fcars <- apply(dt,2, avg)
-fcars
+fcars1 <- sapply(dt, avg)
+fcars1
+fcars2 <- apply(dt, 2, avg)
+fcars2
 
 
-
-below_avg <- function(x){
+below_avg <- function(x) {
   avg <- mean(x)
   return(x[x<avg])
 }
 
 dt_s <- sapply(dt, below_avg)
 dt_l <- lapply(dt, below_avg)
-identical(dt_s,dt_l)
+dt_a <- apply(dt, 2, below_avg)
+identical(dt_s, dt_l)
+identical(dt_s, dt_a)
 sapply(dt, min)
 lapply(dt, min)
 tapply(iris$Sepal.Width, iris$Species, median)
@@ -666,7 +690,8 @@ tapply(iris$Sepal.Width, iris$Species, median)
 #Import Data into R
 PATH <- 'https://raw.githubusercontent.com/guru99-edu/R-Programming/master/mtcars.csv'
 df <- read.csv(PATH, header = T, sep = ",", stringsAsFactors = F)
-df2 <- import(PATH, string)
+# df2 <- import(PATH, string)
+df2 <- import(PATH)
 identical(df, df2)
 nrow(df)
 class(df$X)
@@ -676,12 +701,15 @@ readxl_example()
 example <- readxl_example("geometry.xls")
 excel_sheets(example)
 readxl_example("geometry.xls")
-read_xlsx("C:/Users/Ukasz/Documents/R/win-library/4.0/readxl/extdata/deaths.xlsx")
+read_xlsx("/home/ukasz/R/x86_64-pc-linux-gnu-library/3.6/readxl/extdata/deaths.xlsx")
 
 example <- readxl_example("datasets.xlsx")
 excel_sheets(example)
 quake <- read_excel(example, sheet = "quakes")
 quake2 <- as_tibble(import(example, sheet = 4))
+quake3 <- import(example, sheet = 4)
+head(quake3)
+identical(quake, quake2)
 iris <- read_excel(example, n_max = 5, col_names = T)
 example2 <- read_excel(example, range = "A1:B5", col_names = T)
 example3 <- read_excel(example, range = cell_rows(1:5), col_names = T)
@@ -690,6 +718,7 @@ iris_row_no_header <-read_excel(example, range =cell_rows(2:3),col_names =FALSE)
 col <- read_excel(example, range = cell_cols('A:B'))
 col2 <- as_tibble(import(example, range=cell_cols('A:B')))
 iris_na <- read_excel(example, na = "sethosa")
+iris_na <- read_excel(example, range = "A1:E51", col_names = T)
 sum(is.na(iris_na))
 
 library(haven)
@@ -707,10 +736,11 @@ head(df)
 
 # Cleaning Data
 # Replace Missing Values(NA)
-mutate(airquality, Ozone=-Ozone, new= (Temp-32)/1.8) 
+head(mutate(airquality, Ozone=-Ozone, new= (Temp-32)/1.8))
 
 PATH <- "https://raw.githubusercontent.com/guru99-edu/R-Programming/master/test.csv"
 df_titanic <- read.csv(PATH, sep = ",")
+head(df_titanic)
 df_titanic <- as_tibble(import(PATH))
 apply(df_titanic, 2, anyNA)
 apply(df_titanic, 2, is.na)
@@ -718,6 +748,7 @@ ncol(df_titanic)
 head(df_titanic[c(rep(F, 10), T)])
 list_na <- colnames(df_titanic)[apply(df_titanic, 2, anyNA)]
 df_titanic_drop <- na.omit(df_titanic)
+nrow(df_titanic)
 nrow(df_titanic_drop)
 
 # Create mean
@@ -731,39 +762,38 @@ identical(df_titanic[list_na], df_titanic[, c(5, 9)])
 right_col <- colnames(df_titanic) %in% colnames(df_titanic)[apply(df_titanic,2,anyNA)]
 
 df_titanic[, 'Age']
+df_titanic['Age']
 
 avrage_missing <- 
-  apply(df_titanic[, right_col],
-        2,
-        mean,
-        na.rm = T
-  )
+  apply(df_titanic[, right_col], 2, mean, na.rm = T)
 
-df_titanic_replace <- 
+apply(df_titanic[, right_col], 2, mean, na.rm = F)
+
+
+df_titanic_replace <-
   mutate(
     df_titanic,
     replace_age = ifelse(is.na(Age), avrage_missing[1], Age),
     replace_fare = ifelse(is.na(Fare), avrage_missing[2], Fare)
-  )
+)
 
-df_titanic_replace2 <- 
+df_titanic_replace2 <-
   df_titanic %>%
-  mutate(replace_mean_age  = ifelse(is.na(Age), avrage_missing[1], Age),
-         replace_mean_fare = ifelse(is.na(Fare), avrage_missing[2], Fare)
-  )
+  mutate(replace_mean_age = ifelse(is.na(Age), avrage_missing[1], Age),
+       replace_mean_fare = ifelse(is.na(Fare), avrage_missing[2], Fare)
+)
 
 is.na(df_titanic$Age)
 anyNA(df_titanic$Age)
 sum(is.na(df_titanic))
-
 sum(is.na(df_titanic_replace2$Age))
 sum(is.na(df_titanic_replace2$replace_mean_age))
 
-df_titanic_short <- 
+df_titanic_short <-
   tibble(
     sapply(df_titanic,
-           function(x) ifelse(is.na(x), 
-                              mean(x, na.rm = T), 
+           function(x) ifelse(is.na(x),
+                              mean(x, na.rm = T),
                               x)
     )
   )
@@ -771,7 +801,7 @@ df_titanic_short <-
 
 
 # Export Data
-setwd("C:/Users/Ukasz/Desktop")
+setwd("/home/ukasz/Documents/Programowanie/R")
 directory <- getwd()
 
 select(mtcars, mpg, disp, gear) %>%
@@ -782,29 +812,44 @@ df <- mtcars %>%
   group_by(gear) %>%  
   summarize(mean_mpg = mean(mpg), mean_disp = mean(disp))
 write.csv(df, "df.csv")
-write.xls(df, 'df,xls')
+install.packages("xlsx")
+library("xlsx")
+write.xlsx(df, "df.xls")
 
 head(iris)
 group_by(iris, Species) %>%
   summarise(mean_SL = mean(Sepal.Length))
 
 # Run this code to create the function
-open_folder <-function(dir){
-  if (.Platform['OS.type'] == "windows"){
+open_folder <-function(dir) {
+  if (.Platform['OS.type'] == "windows") {
     shell.exec(dir)  
   } else {
     system(paste(Sys.getenv("R_BROWSER"), dir))
   }
 }
+
+open_folder <-function(dir) {
+  if (.Platform['OS.type'] == "unix") {
+    system(paste(Sys.getenv("R_BROWSER"), dir))
+  } else {
+    shell.exec(dir)
+  }
+}
+
+open_folder <-function(dir) {
+  if (.Platform['OS.type'] == "windows") {
+    shell.exec(dir)
+  } else if (.Platform['OS.type'] == "unix") {
+    system(paste(Sys.getenv("R_BROWSER"), dir))
+  }
+}
+
 # Call the function to open the folder
 open_folder(directory)
 
-# Run this code to create the function
-open_folder <-function(dir){
-    shell.exec(dir)  
-}
-# Call the function to open the folder
 
+# Call the function to open the folder
 open_folder(directory)
 shell.exec(directory)
 install.packages('xlsx')
@@ -876,7 +921,6 @@ ggcorr(data,
        label_size = 3,
        color = "grey50")
 
-library(ggplot2)
 ggpairs(data3, 
         columns = c("log_totexp", "log_income", "age", "wtrans"),
         title = "Bivariate analysis of revenue expenditure by the British household",
@@ -893,32 +937,35 @@ data <- read.csv("https://raw.githubusercontent.com/guru99-edu/R-Programming/mas
   select(c(playerID, yearID, AB, teamID, lgID, G, R, HR, SH)) %>%
   arrange(playerID, teamID, yearID)
 glimpse(data)
+head(data)
 summarise(data, mean_run = mean(R))
 summarise(data, mean_games = mean(G, na.rm = T), mean_SH = mean(SH, na.rm = T))
 mean(data$G)
-summarise(group_by(data, lgID), mean_run = mean(R)) # nie dzia�a
+summarise(group_by(data, lgID), mean_run = mean(R))
 
 group_by(mtcars, cyl) %>%
 summarise(disp=mean(disp), hp=mean(hp))
 
-## Creating identification number to represent 50 individual people
+# Creating identification number to represent 50 individual people
 ID <- c(1:50)
-## Creating sex variable (25 males/25 females)
+# Creating sex variable (25 males/25 females)
 Sex <- rep(c("male", "female"), 25) # rep stands for replicate
-## Creating age variable (20-39 year olds)
+# Creating age variable (20-39 year olds)
 Age <- c(26, 25, 39, 37, 31, 34, 34, 30, 26, 33, 
          39, 28, 26, 29, 33, 22, 35, 23, 26, 36, 
          21, 20, 31, 21, 35, 39, 36, 22, 22, 25, 
          27, 30, 26, 34, 38, 39, 30, 29, 26, 25, 
          26, 36, 23, 21, 21, 39, 26, 26, 27, 21) 
-## Creating a dependent variable called Score
+# Creating a dependent variable called Score
 Score <- c(0.010, 0.418, 0.014, 0.090, 0.061, 0.328, 0.656, 0.002, 0.639, 0.173, 
            0.076, 0.152, 0.467, 0.186, 0.520, 0.493, 0.388, 0.501, 0.800, 0.482, 
            0.384, 0.046, 0.920, 0.865, 0.625, 0.035, 0.501, 0.851, 0.285, 0.752, 
            0.686, 0.339, 0.710, 0.665, 0.214, 0.560, 0.287, 0.665, 0.630, 0.567, 
            0.812, 0.637, 0.772, 0.905, 0.405, 0.363, 0.773, 0.410, 0.535, 0.449)
-## Creating a unified dataset that puts together all variables
+# Creating a unified dataset that puts together all variables
 data_2 <- tibble(ID, Sex, Age, Score)
+
+summarise(group_by(data_2, Sex), m = mean(Score), s = sd(Score), n = length(Score))
 ddply(
   data_2, 
   "Sex",
@@ -980,7 +1027,6 @@ data %>%
   group_by(teamID) %>%
   summarise(sd_at_bat_league = sd(HR))
 
-
 # Min and max
 data%>%
   group_by(playerID) %>%
@@ -992,7 +1038,6 @@ data %>%
   group_by(playerID) %>%
   summarise(number_year = n()) %>%
   arrange(desc(number_year))
-
 
 sort(c(5, 1, 3, 5, 76), decreasing = T)
 
@@ -1066,8 +1111,6 @@ str(step_2_df)
 
 
 # Data Analysis, Scatter Plot in R using ggplot2
-library(ggplot2)
-
 ggplot(mtcars, aes(x = mpg, y = drat, color = gear)) +
   geom_point(aes(color = factor(gear)), pch=19)
 
@@ -1184,20 +1227,23 @@ box_plot +
 
 # Bar Chart & Histogram
 iris %>%
-  mutate(Species = factor(Species)) %>%
+mutate(Species = factor(Species)) %>%
 ggplot(aes(Sepal.Length, fill=Species))+
-  geom_bar()
+geom_bar()
 
 iris %>%
-  filter(iris$Species == "setosa") %>%
-  mutate(Species = factor(Species)) %>%
-  ggplot(aes(Sepal.Length, fill=Species))+
-  geom_bar()
+ggplot(aes(Sepal.Length, fill=Species))+
+geom_bar()
 
+iris %>%
+filter(iris$Species == "setosa") %>%
+#  mutate(Species = factor(Species)) %>%
+ggplot(aes(Sepal.Length, fill=Species))+
+geom_bar()
 
 ggplot(mtcars, aes(factor(cyl), fill = factor(cyl))) +
-  geom_bar(alpha=.5) +
-  theme_classic()
+geom_bar(alpha=.5) +
+theme_classic()
 
 ggplot(mtcars, aes(factor(cyl), fill = 'coral')) +
   geom_bar(
@@ -1212,6 +1258,9 @@ mtcars %>%
   group_by(cyl) %>%
   summarise(sum_cyl=n())
 
+mtcars %>%
+  group_by(cyl) %>%
+  summarise(sum_cyl=n())
 
 data_hist2 <- mtcars %>%
   mutate(am = factor(am, labels = c("Automatic", "Manual")),
@@ -1348,7 +1397,6 @@ df <- mtcars % > %
   select(-c(am, vs, cyl, gear, carb))
 ggscatmat(df, columns = 1: ncol(df))
 
-install.packages("olsrr")
 library(olsrr)
 model <- mpg ~.
 fit <- lm(model, df)
@@ -1374,7 +1422,7 @@ head(titanic)
 clean_titanic <- titanic %>%
   select(-c(home.dest, cabin, name, x, ticket)) %>%
   na.omit() %>%
-  mutate(pclass = factor(pclass, levels = c(1, 2, 3),  labels = c('Upper', 'Middle', 'Lower'))) %>%
+  mutate(pclass = factor(pclass, levels = c(1, 2, 3), labels = c('Upper', 'Middle', 'Lower'))) %>%
   mutate(survived = factor(survived, levels = c(0, 1), labels = c("No", "Yes")))
 glimpse(clean_titanic)
 
@@ -1469,7 +1517,9 @@ print(rf_default)
 best_mtry <- rf_default$bestTune$mtry
 max(rf_default$results$Accuracy)
 
-## Classification Example
+
+
+# Classification Example
 data(iris)
 TrainData <- iris[,1:4]
 TrainClasses <- iris[,5]
@@ -1517,8 +1567,8 @@ confusionMatrix(prediction, data_test$survived)
 
 
 # Generalized Linear Model
-curve(1/(1 + exp(-x)), -10, 10,
-      main = "sigmoid")
+curve(1/(1 + exp(-x)), -10, 10, main = "sigmoid")
+
 data_adult <-read.csv("https://raw.githubusercontent.com/guru99-edu/R-Programming/master/adult.csv")
 glimpse(data_adult)
 continuous <- select_if(data_adult, is.numeric)
@@ -1529,6 +1579,8 @@ ggplot(data_adult, aes(x=hours.per.week)) +
 
 top_one_precent <- quantile(data_adult$hours.per.week, .99)
 data_adult_drop <- data_adult %>% filter(hours.per.week < top_one_precent)
+identical(data_adult_drop, data_adult %>% filter(hours.per.week < 80))
+
 glimpse(data_adult_drop)
 data_adult_drop %>%
   select_if(is.numeric) %>%
@@ -1812,3 +1864,62 @@ dev.off()  # But only if there IS a plot
 cat("\014")  # ctrl+L
 
 # Clear mind :)
+
+history(max.show = 25)
+
+drop=FALSE
+When drop is FALSE, the dimensions of the object are kept.
+
+y <- 1:9
+dim(y) <- c(3, 3)
+class(y)
+mydf <- data.frame(x=1:3, y=c("a","b","c"), stringsAsFactors=FALSE)
+class(mydf[, 2])
+class(producers[,1])
+ls()
+mylist <- list(1,2,"C",4,5)
+unlist(mylist)
+NA/1
+
+library(DescTools)
+deliver <- aggregate(count,by=list(area,driver), FUN=mean)
+print(deliver)
+head(d.pizza)
+
+m1 <- matrix(1:12, nrow = 3)
+dimnames(m1) <- list(month.abb[1:3], month.abb[4:7])
+m1
+
+ournames <- c('Cst', 'st')
+Cpeople <- ournames %in% grep("^C", ournames, value=TRUE)
+
+v <- 1:3
+names(v) <- c("a", "b", "c")
+v[4] <- 4
+names(v[4])
+
+x <- c(1, 2, 3, 4)
+x[-1]
+x[c(2,3,4)]
+x[c(0, 1, 1, 4)]
+
+x<-5:8
+names(x)<-letters[5:8]
+x
+
+x<-as.Date("2018-10-01")
+months(x)
+
+fact<-factor(c("Rep","Dem","Dem","Rep"))
+fact
+fact[2]<-"Ind"
+
+StartDate<- as.Date("2020/2/28")
+StopDate<- as.Date("2020/3/1")
+StopDate-StartDate
+
+met
+
+matrix(month.abb[1:3], nrow = 3, ncol = 1)
+
+ls(pat="V")
