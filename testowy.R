@@ -35,7 +35,7 @@
 # read.csv(PATH), read_excel(df, range = )
 # write.csv(data, "name.csv") write.csv(df, "df.csv")
 # import(PATH)
-# identical(df1,df2)
+# identical(df1, df2)
 # is.na(df)>T,F; anyNA()>T,F colnames(df)[apply(df, 2, anyNA)]; na.omit(df)>df, na.rm = T
 # chatacter1 %in% chatacter2 > T, F
 # mutate(df, new_column = )
@@ -82,12 +82,20 @@
 # install.packages(c("jsonlite", "rlang"))
 # install.packages("olsrr")
 # install.packages("DescTools")
+# install.packages("languageserver") from R Extension for Visual Studio Code
+install.packages("tidyverse")
+install.packages("tm")
+install.packages("tidytext")
+install.packages("janeaustenr")
+
 library(datasets)  # Load base packages manually
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(pacman)
 library(rio)
-library(tidyr)
+
+library(dplyr) # in tidyverse
+library(ggplot2) # in tidyverse
+library(tidyr) # in tidyverse
 library(psych)
 library(GGally)
 
@@ -306,7 +314,6 @@ df <- read.csv(PATH)[1:5]
 str(df)
 head(import(PATH)[1:5])
 head(df)
-
 
 
 
@@ -573,7 +580,7 @@ data_frame <- tibble(
 data_frame$c1_norm <- (data_frame$c1 - min(data_frame$c1))/(max(data_frame$c1) - min(data_frame$c1))
 head(data_frame)
 
-normalize <- function(x){
+normalize <- function(x) {
   return((x - min(x))/(max(x) - min(x)))
 }
 norm1 <- normalize(data_frame$c1)
@@ -662,7 +669,8 @@ smn_cars <- sapply(dt, min)
 describe(dt)
 
 avg <- function(x) {  
-  return(( min(x) + max(x) ) / 2)
+  # return(( min(x) + max(x) ) / 2)
+  names(x)
 }
 avg(dt[1])
 fcars1 <- sapply(dt, avg)
@@ -1137,9 +1145,15 @@ ggsave("my_plot.jpg")
 
 
 # boxplot()
+head(airquality)
 air_data <- as_tibble(airquality) %>%
   select(-c(Solar.R, Temp)) %>%
   mutate(Month = factor(Month, order=T, labels=c("May", "June", "July", "August", "September")))
+
+air_data2 <- as_tibble(airquality) %>%
+  select(-c(Solar.R, Temp)) %>%
+  mutate(Month = factor(Month, order=T, labels=month.abb[1:12]))
+
 glimpse(airquality)
 glimpse(air_data)
 airquality$Month
@@ -1153,7 +1167,7 @@ box_plot+
   geom_boxplot(
     outlier.colour = "red",
     outlier.shape = 17
-  )+
+  )+m
   stat_summary(
     fun = mean,
     geom = "point",
@@ -1923,3 +1937,273 @@ met
 matrix(month.abb[1:3], nrow = 3, ncol = 1)
 
 ls(pat="V")
+
+
+HacerRank
+Sample Input
+"order_id","date","revenue"
+"id01",2019-01-04,177
+"id02",2019-10-10,332
+"id03",2019-06-15,263
+"id04",2018-06-02,492
+"id05",2018-06-08,159
+"id06",2020-10-03,272
+"id07",2019-02-03,51
+"id08",2018-07-17,430
+"id09",2020-02-18,494
+"id10",2018-12-16,112
+
+
+
+PATH = "/home/ukasz/Documents/Programowanie/R/hk_files/hr1.csv"
+# df = data.frame(import('hr1.csv'))
+df = tibble(import('hr_files/hr1.csv'))
+df2 <- df %>%
+  select(-c(order_id)) %>%
+  mutate(date = format(as.Date(date), "%Y-%m")) %>%
+  group_by(date) %>%
+  summarise(total=sum(revenue)) %>%
+  separate(date, c("Year", "month"), sep="-") %>%
+  pivot_wider(names_from = month, values_from = total) %>%
+  replace(is.na(.), 0) %>%
+  select("Year", sort(names(.)))
+
+setwd("/home/ukasz/Documents/Programowanie/R")
+directory = paste(getwd(), "/hr_files", sep='')
+write.csv(df2, paste(directory, "/hr1_tmp.csv", sep=''))
+
+bottom <- as_tibble(t(rbind('Mean', data.frame(round(colMeans(df2[, 2:ncol(df2)]))))))
+colnames(bottom)[colnames(bottom)=="1"] <- "Year"
+df3 <- rbind(df2, bottom)
+
+for (i in names(df3)) {
+  if (i != "Year")
+    names(df3)[names(df3) == i] <- month.abb[as.numeric(i)]
+}
+
+# 01 to nie 1
+for (i in c(1:12)) {
+  names(df3)[names(df3) == i] <- month.abb[as.numeric(i)]
+}
+
+strtoim <- function(i) {
+  print(names(i))
+  # return(i[1])
+  # if (i !=i "Year")
+    # names(df3)[names(df3) == i] <- month.abb[strtoi(i)]
+ }
+
+apply(df3, 2, strtoim)
+
+
+# jest głupie, ale działa
+names(df3)[names(df3) == "01"] <- "Jan"
+names(df3)[names(df3) == "02"] <- "Feb"
+names(df3)[names(df3) == "03"] <- "Mar"
+names(df3)[names(df3) == "04"] <- "Apr"
+names(df3)[names(df3) == "05"] <- "May"
+names(df3)[names(df3) == "06"] <- "Jun"
+names(df3)[names(df3) == "07"] <- "Jul"
+names(df3)[names(df3) == "08"] <- "Aug"
+names(df3)[names(df3) == "09"] <- "Sep"
+names(df3)[names(df3) == "10"] <- "Oct"
+names(df3)[names(df3) == "11"] <- "Nov"
+names(df3)[names(df3) == "12"] <- "Dec"
+
+
+
+# sum by colums
+colSums(mtcars[,-1])
+library("purrr")
+mtcars %>%
+select_if(is.numeric) %>%
+  map_dbl(sum)
+# sort by columns
+select(sort(names(.)))
+# replace NA na 0
+df2[is.na(df2)] <- 0
+# int to months
+month <- c(12, 03,6,2,3,7)
+month.abb[month]
+# change column name
+setNames(df2, c("premium","change","newprice"))
+# dates
+format(as.Date("2018-12-01"), "%Y")
+months(as.Date("2019-01-04"))
+month.abb[1:12]
+
+
+Sample Output
+"Year","Jan","Feb","Jun","Jul","Oct","Dec"
+"2018",0,0,651,430,0,112
+"2019",177,51,263,0,332,0
+"2020",0,494,0,0,272,0
+"Mean",59,182,305,143,201,37
+
+"order_id","date","revenue"
+"id01",2018-01-07,411
+"id02",2019-01-31,85
+"id03",2019-04-21,369
+"id04",2018-04-16,81
+"id05",2019-08-03,492
+"id06",2020-06-28,128
+"id07",2020-08-22,193
+"id08",2019-09-04,263
+"id09",2018-10-20,199
+"id10",2020-09-26,394
+
+"Year","Jan","Apr","Jun","Aug","Sep","Oct"
+"2018",411,81,0,0,0,199
+"2019",85,369,0,492,263,0
+"2020",0,0,128,193,394,0
+"Mean",165,150,43,228,219,66
+
+
+library(tidyverse)
+library(tm)
+df <- import("hr_files/hr3.csv")
+dfa <- read.csv("hr_files/hr3.csv")
+dfb <- read_csv("hr_files/hr3.csv")
+identical(df, dfa)
+typeof(df)
+
+setwd("/home/ukasz/Documents/Programowanie/R")
+directory = paste(getwd(), "/hr_files", sep='')
+write.csv(df, paste(directory, "/hr3_tmp.csv", sep=''))
+
+
+df0 <- c("fashion", "dress", "shoes", "clothes", "shirt")
+df2 <- df  %>%
+  mutate(tweet_text = tolower(tweet_text))
+
+
+# drop punctuation
+df2$tweet_text = str_replace_all(df2$tweet_text, "[[:punct:]]", "")
+# remeve words with length less than 5 or greater than 10
+df2$tweet_text = gsub('\\b(\\w{1,4}|\\w{10,})\\b', '', df2$tweet_text)
+# remove `
+df2$tweet_text = str_remove_all(df2$tweet_text, "`")
+# remove spaces
+df2$tweet_text = gsub("\\s+", " ", df2$tweet_text)
+# trim spaces, removes spaces from begin and end of string
+df2$tweet_text = str_trim(df2$tweet_text, side = c("both", "left", "right"))
+# string split
+df2$tweet_text = strsplit(df2$tweet_text, split=" ")
+
+
+find_word1 <- unlist(df2$tweet_text[13]) %in% df0
+unlist(df2$tweet_text[13])[find_word1]
+find_word2 <- df0 %in% unlist(df2$tweet_text[13])
+df0[find_word2]
+
+word <- NULL
+ce2 <- NULL
+for (i in (1:nrow(df2))) {
+  find_word1 <- unlist(df2$tweet_text[i]) %in% df0
+  a <- unlist(df2$tweet_text[i])[find_word1]
+  if (identical(a, character(0))) next
+  #print(a)
+  #print(df$tweet_sentiment[i])
+  word <- c(word, a)
+  ce2 <- c(ce2, df$tweet_sentiment[i])
+}
+
+df3 <- tibble(word, ce2)  %>% 
+group_by(word)  %>% 
+summarise(ce2)
+
+df4 <- data.frame(word, ce2)  %>% 
+group_by(word)  %>% 
+summarise() %>% 
+add_column(positive = 0, neutral = 0, negative = 0)
+
+df4[, "positive"]
+
+rownames(df4) <- letters[1:2]
+rownames(df4)
+colnames(df4)
+
+t(df4["word"])
+
+
+for (i in t(df3)) {
+  c 
+  print(i)
+}
+
+for (i in (1:nrow(df3))) {
+  print()
+}
+
+
+
+
+
+"tweet_id","tweet_text","tweet_sentiment"
+"40b149d273","poor girl","negative"
+"e61d64740e","Yeah but it doesn`t sound indie enough i need2learn some other tunes and then pick up mo style =] 1hour! I`ll c u then ;)","neutral"
+"431ed00e5d","hey beautiful","positive"
+"fe530042f7","I shudder at the thought of what she was thinking she`d do with it if she`d managed to reclaim it...","neutral"
+"2ca5660e66","May 10 is Human Kindness Day.","neutral"
+"b59a33cbaf","needs 1000 words for 502 part 2 .... then freedom ..... until another few assignments and exams","neutral"
+"7c843939bb","ned to go to beathroom, don`t know if i can reach/find clothes. need to walk outsie to get to bathroom. ok at night, not ok in daylight.","neutral"
+"9fb39d3c8c","Only has under 200 words left to write on her assignment","neutral"
+"c481433b33","hm... i don`t I can recommend any white chocolates though.. you have to move to the `dark` side first..","neutral"
+"1a34426d09","my grandpa was telling me how they used to cut up human bodies in med school","neutral"
+"93a9346111","I believe a man died in a car wreck today just right down the road. It happened at 12 and at 2 he was still in the car.","negative"
+"4d6da31db3","Superman","positive"
+"b442a0a793","I`m stuck wearing a sun dress","negative"
+"969185c4e9","omg!! i have so many finals to study for !!! i so freaked out that im gona fail","negative"
+"b3fa6e62e2","is looking forward to tonight`s dinner date with Mom; is gymming this afternoon; started 'bawas kanin' (less rice) movement; is celibate.","neutral"
+
+"word","positive","neutral","negative"
+"clothes",0,1,0
+"dress",0,0,1
+
+
+#2
+
+"tweet_id","tweet_text","tweet_sentiment"
+"0c8d8b7013","he is the meanest lil boy ever!!!!!!!!!! When I was a lil girl everyone loved me","neutral"
+"edfc9878fd","beautiful.","positive"
+"7b8a357dcf","is now going to the hairdressers instead of running due to rain","neutral"
+"b595c6c4f4","too many Germï¿½n rodrï¿½guez`s results. Which one are you? I mean, how do you look like in your profile picture?","neutral"
+"c0b0c01f67","..they dont ever send me notices! just notices for other people to my address!","negative"
+"dacf8c1cda","O and i have to wear a **** jacket today cos i didnt notice a mark on my shirt..","neutral"
+"3df92745c3","my baby man is 4 years old a week today he`s growing up too fast.....","neutral"
+"194c5351e0","Bleah a tad tipsy and too many cup cakes. Maddies birthday tomorrow + family party","neutral"
+"a79f914fb9","another friday night with nothing to do ...boyfriend works until 1am","neutral"
+"feb7ba9cc1","hehe i will never thorw out these shoes i`m listening to varsity fanclub surprise surprise sway sway baby is awesom","positive"
+"fda3d9467e","Yeah man, been a while since I heard you spittin`.","neutral"
+"a05b20af47","Environmental project","neutral"
+"bb7b30264b","Cleaning the old apartment today. Yay...","neutral"
+"454829e8ff","Running errands with my little man. Maybe he won`t act like a 3 year old today.","neutral"
+"cbbbffcfe2",". Glad you mentioned it last night, watched it again","positive"
+"b269c57eb2","when we were poor and lived in Germany it was our favourite cheap Saturday. Now we have one 20min away.","positive"
+"5931a8cc5e","Hey OJ, I just want to ask, you hooked up with somebody ayt now?","neutral"
+"7ea1d989a2","haha dont we ever do that before many times","neutral"
+"e68a444cc4","Crabs are amazing...well as long as they`re not in your pants.","neutral"
+"ac7a56d521","Somebody get me out of work tomorrow.","neutral"
+
+"word","positive","neutral","negative"
+"shirt",0,1,0
+"shoes",1,0,0
+
+
+library(dplyr)
+Attaching package: ‘dplyr’
+The following objects are masked from ‘package:stats’:
+    filter, lag
+The following objects are masked from ‘package:base’:
+    intersect, setdiff, setequal, union
+
+library(pacman)
+Error in library(pacman) : there is no package called ‘pacman’
+Calls: pivot_data_by_years_and_months -> library
+Execution halted
+
+library(lubridate)
+Attaching package: ‘lubridate’
+The following object is masked from ‘package:base’:
+    date
+
